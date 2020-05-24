@@ -197,6 +197,8 @@ jobs:
     if: (github.event_name == 'push') && github.repository == 'freqtrade/freqtrade'
     # Build RPI image ...
     steps:
+    - uses: actions/checkout@v2
+
     - name: Set up Docker Buildx
       id: buildx
       uses: crazy-max/ghaction-docker-buildx@v1
