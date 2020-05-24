@@ -6,6 +6,7 @@ on:
       - master
       - develop
       - github_actions_tests
+      - rpi_crosscompile
     tags:
     release:
       types: [published]
@@ -188,6 +189,29 @@ jobs:
         job_name: '*Freqtrade Docs*'
         channel: '#notifications'
         url: ${{ secrets.SLACK_WEBHOOK }}
+
+  deploy_rpi:
+    needs: [ build, build_windows, docs_check ]
+    runs-on: ubuntu-18.04
+
+    if: (github.event_name == 'push') && github.repository == 'freqtrade/freqtrade'
+    # Build RPI image ...
+    steps:
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: crazy-max/ghaction-docker-buildx@v1
+      with:
+        buildx-version: latest
+        qemu-version: latest
+    - name: Available platforms
+      run: echo ${{ steps.buildx.outputs.platforms }}
+
+    - name: Run Buildx
+      run: |
+        docker buildx build \
+          --platform linux/arm/v6 \
+          --output "type=image,push=false" \
+          --file ./Dockerfile ./test
 
   deploy:
     needs: [ build, build_windows, docs_check ]
