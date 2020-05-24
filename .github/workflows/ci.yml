@@ -191,7 +191,7 @@ jobs:
         url: ${{ secrets.SLACK_WEBHOOK }}
 
   deploy_rpi:
-    needs: [ build, build_windows, docs_check ]
+    # needs: [ build, build_windows, docs_check ]
     runs-on: ubuntu-18.04
 
     if: (github.event_name == 'push') && github.repository == 'freqtrade/freqtrade'
@@ -211,10 +211,10 @@ jobs:
         docker buildx build \
           --platform linux/arm/v6 \
           --output "type=image,push=false" \
-          --file ./Dockerfile ./test
+          --file ./Dockerfile
 
   deploy:
-    needs: [ build, build_windows, docs_check ]
+    needs: [ build, build_windows, docs_check, deploy_rpi ]
     runs-on: ubuntu-18.04
     if: (github.event_name == 'push' || github.event_name == 'schedule' || github.event_name == 'release') && github.repository == 'freqtrade/freqtrade'
     steps:
