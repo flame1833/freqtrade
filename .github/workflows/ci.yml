@@ -211,7 +211,7 @@ jobs:
         docker buildx build \
           --platform linux/arm/v6 \
           --output "type=image,push=false" \
-          --file ./Dockerfile
+          --file ./Dockerfile.armhf .
 
   deploy:
     needs: [ build, build_windows, docs_check, deploy_rpi ]
